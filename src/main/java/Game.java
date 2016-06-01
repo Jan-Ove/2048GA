@@ -3,6 +3,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 public class Game {
 
 	private int[] field;
@@ -31,14 +33,15 @@ public class Game {
 	}
 
 	public void moveDown() {
-		List<Integer[]> collumns = new ArrayList<>(width);
-		for (int c = 0; c < width; c++) {
-			Integer[] collumn = new Integer[height];
-			for (int r = 0; r < height; r++) {
-				collumn[r] = c + r * height;
-			}
-			collumns.add(collumn);
-		}
+		moveFields(getVerticalRefs(false));
+	}
+
+	public void moveUp() {
+		moveFields(getVerticalRefs(true));
+
+	}
+
+	private void moveFields(List<Integer[]> collumns) {
 		for (Integer[] refs : collumns) {
 			// Move all down
 			List<Integer> uniqueValues = Arrays.asList(refs).stream().map(i -> field[i.intValue()]).filter(i -> i != 0)
@@ -70,6 +73,21 @@ public class Game {
 				}
 			}
 		}
+	}
+
+	private List<Integer[]> getVerticalRefs(boolean reverse) {
+		List<Integer[]> collumns = new ArrayList<>(width);
+		for (int c = 0; c < width; c++) {
+			Integer[] collumn = new Integer[height];
+			for (int r = 0; r < height; r++) {
+				collumn[r] = c + r * height;
+			}
+			collumns.add(collumn);
+		}
+		if (reverse) {
+			collumns.forEach(a -> ArrayUtils.reverse(a));
+		}
+		return collumns;
 	}
 
 }
