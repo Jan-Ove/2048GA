@@ -45,4 +45,27 @@ public class GameTest {
 		assertArrayEquals(expected, game.getField());
 	}
 
+	@Test
+	public void moveRight() throws Exception {
+		int[] field = { 0, 0, 2, 2, 0, 2, 2, 2, 2, 0, 2, 0, 4, 0, 4, 2 };
+		int[] expected = { 0, 0, 0, 4, 0, 0, 2, 4, 0, 0, 0, 4, 0, 0, 8, 2 };
+
+		game.setField(field);
+		game.moveRight();
+
+		assertArrayEquals(expected, game.getField());
+	}
+
+	@Test
+	public void moveLeft() throws Exception {
+		int[] field = { 2, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 2, 2, 2, 2, 2 };
+		int[] expected = { 4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0, 4, 4, 0, 0 };
+
+		game.setField(field);
+		game.moveLeft();
+
+		assertArrayEquals(expected, game.getField());
+
+	}
+
 }
