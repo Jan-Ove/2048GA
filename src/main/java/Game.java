@@ -36,40 +36,60 @@ public class Game {
 		this.field = field;
 	}
 
-	public void down() {
-		moveDown();
-		addRandomNumber();
+	public boolean down() {
+		boolean moved = moveDown();
+		if (moved) {
+			addRandomNumber();
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	public void up() {
-		moveUp();
-		addRandomNumber();
+	public boolean up() {
+		boolean moved = moveUp();
+		if (moved) {
+			addRandomNumber();
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	public void left() {
-		moveLeft();
-		addRandomNumber();
+	public boolean left() {
+		boolean moved = moveLeft();
+		if (moved) {
+			addRandomNumber();
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	public void right() {
-		moveRight();
-		addRandomNumber();
+	public boolean right() {
+		boolean moved = moveRight();
+		if (moved) {
+			addRandomNumber();
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	void moveDown() {
-		moveFields(getVerticalRefs(false));
+	boolean moveDown() {
+		return moveFields(getVerticalRefs(false));
 	}
 
-	void moveUp() {
-		moveFields(getVerticalRefs(true));
+	boolean moveUp() {
+		return moveFields(getVerticalRefs(true));
 	}
 
-	void moveRight() {
-		moveFields(getHorizontalRefs(false));
+	boolean moveRight() {
+		return moveFields(getHorizontalRefs(false));
 	}
 
-	void moveLeft() {
-		moveFields(getHorizontalRefs(true));
+	boolean moveLeft() {
+		return moveFields(getHorizontalRefs(true));
 	}
 
 	public boolean isOtherMovePossible() {
@@ -104,8 +124,10 @@ public class Game {
 		field[freeFields.get(0)] = addNumber;
 	}
 
-	private void moveFields(List<Integer[]> collumns) {
+	private boolean moveFields(List<Integer[]> collumns) {
+		boolean moved = false;
 		for (Integer[] refs : collumns) {
+			Object[] rowBefore = Arrays.asList(refs).stream().map(i -> field[i]).collect(Collectors.toList()).toArray();
 			// Move all down
 			List<Integer> notZeroValues = Arrays.asList(refs).stream().map(i -> field[i.intValue()]).filter(i -> i != 0)
 					.collect(Collectors.toList());
@@ -116,6 +138,7 @@ public class Game {
 					field[refs[j]] = 0;
 				}
 			}
+
 			// Build new Pairs
 			int current_ref = refs[refs.length - 1];
 			for (int i = refs.length - 2; i >= 0; i--) {
@@ -135,7 +158,10 @@ public class Game {
 				current_ref = next_ref;
 
 			}
+			moved = moved || !Objects.deepEquals(rowBefore,
+					Arrays.asList(refs).stream().map(i -> field[i]).collect(Collectors.toList()).toArray());
 		}
+		return moved;
 	}
 
 	private List<Integer[]> getVerticalRefs(boolean reverse) {
