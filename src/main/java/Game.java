@@ -26,7 +26,7 @@ public class Game {
 	}
 
 	public int[] getField() {
-		return field;
+		return field.clone();
 	}
 
 	public void setField(int[] field) {
