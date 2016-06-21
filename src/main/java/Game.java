@@ -195,4 +195,12 @@ public class Game {
 		return rows;
 	}
 
+	public void reset() {
+		for (int i = 0; i < field.length; i++) {
+			field[i] = 0;
+		}
+		addRandomNumber();
+		addRandomNumber();
+	}
+
 }

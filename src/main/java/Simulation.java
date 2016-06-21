@@ -44,22 +44,22 @@ public final class Simulation {
 		return currentRound;
 	}
 
-	private int calculateFitness() {
+	private double calculateFitness() {
 		game.getField();
 		// do sth
 		return 0;
 	}
-	
+
 	private void makeStatistics() {
-		int max = Integer.MIN_VALUE;
-		int min = Integer.MAX_VALUE;
-		int sum = 0;
-		for(GeneticAlgorithm ga: algorithms) {
+		double max = Double.MIN_VALUE;
+		double min = Double.MAX_VALUE;
+		double sum = 0;
+		for (GeneticAlgorithm ga : algorithms) {
 			sum += ga.getFitness();
-			if(ga.getFitness() > max) {
+			if (ga.getFitness() > max) {
 				max = ga.getFitness();
 			}
-			if(ga.getFitness() < min) {
+			if (ga.getFitness() < min) {
 				min = ga.getFitness();
 			}
 		}
