@@ -11,11 +11,12 @@ public final class Simulation {
 	private SimulationRoundResult currentRound;
 	private FitnessFunction ff;
 
-	public Simulation(int fieldLength, int numberOfGAs, Class<GeneticAlgorithm> clazz, GenerationController genControl)
+	public Simulation(int fieldLength, int numberOfGAs, Class<GeneticAlgorithm> clazz, GenerationController genControl, FitnessFunction fitnessFunction)
 			throws InstantiationException, IllegalAccessException {
 		game = new Game(fieldLength, fieldLength);
 		this.genControl = genControl;
 		this.numberOfGAs = numberOfGAs;
+		this.ff = fitnessFunction;
 		algorithms = new ArrayList<>(numberOfGAs);
 		for (int i = 0; i < numberOfGAs; i++) {
 			algorithms.set(i, clazz.newInstance());
