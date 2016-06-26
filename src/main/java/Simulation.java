@@ -9,6 +9,7 @@ public final class Simulation {
 	private int numberOfGAs = 4;
 	private double mutRate = 0.0001;
 	private SimulationRoundResult currentRound;
+	private FitnessFunction ff;
 
 	public Simulation(int fieldLength, int numberOfGAs, Class<GeneticAlgorithm> clazz, GenerationController genControl)
 			throws InstantiationException, IllegalAccessException {
@@ -55,9 +56,7 @@ public final class Simulation {
 	}
 
 	private double calculateFitness() {
-		game.getField();
-		// do sth
-		return 0;
+		return ff.evaluateFitness(game.getField(), 0 /* ??? */);
 	}
 
 	private void makeStatistics() {
