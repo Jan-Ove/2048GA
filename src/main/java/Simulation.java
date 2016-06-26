@@ -26,22 +26,32 @@ public final class Simulation {
 			game.reset();
 			for (int i = 0; i < numberOfMoves; i++) {
 				int direction = ga.getMoveDirection(game.getField());
-				if (direction == 0)
-					game.up();
-				else if (direction == 1)
-					game.right();
-				else if (direction == 2)
-					game.down();
-				else if (direction == 3)
-					game.left();
-				else
+				if (direction == 0) {
+					if (!game.up()) {
+						break;
+					}
+				} else if (direction == 1) {
+					if (!game.right()) {
+						break;
+					}
+				} else if (direction == 2) {
+					if (!game.down()) {
+						break;
+					}
+				} else if (direction == 3) {
+					if (!game.left()) {
+						break;
+					}
+				} else
 					throw new IllegalStateException();
 			}
 			ga.setFitness(calculateFitness());
 		}
 		algorithms = genControl.breedNewGeneration(algorithms, mutRate);
+
 		makeStatistics();
 		return currentRound;
+
 	}
 
 	private double calculateFitness() {
