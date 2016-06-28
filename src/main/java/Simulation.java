@@ -18,7 +18,7 @@ public final class Simulation {
 		this.numberOfGAs = numberOfGAs;
 		this.ff = fitnessFunction;
 		algorithms = new ArrayList<>(numberOfGAs);
-		for (int i = 0; i < numberOfGAs; i++) {
+		for (int i = 0; i < this.numberOfGAs; i++) {
 			algorithms.set(i, clazz.newInstance());
 		}
 	}
@@ -26,7 +26,8 @@ public final class Simulation {
 	public SimulationRoundResult runSimulation() {
 		for (GeneticAlgorithm ga : algorithms) {
 			game.reset();
-			for (int i = 0; i < numberOfMoves; i++) {
+			int i = 0;
+			for (; i < numberOfMoves; i++) {
 				int direction = ga.getMoveDirection(game.getField());
 				if (direction == 0) {
 					if (!game.up()) {
@@ -47,7 +48,7 @@ public final class Simulation {
 				} else
 					throw new IllegalStateException();
 			}
-			ga.setFitness(calculateFitness());
+			ga.setFitness(calculateFitness(i));
 		}
 		algorithms = genControl.breedNewGeneration(algorithms, mutRate);
 
@@ -56,8 +57,8 @@ public final class Simulation {
 
 	}
 
-	private double calculateFitness() {
-		return ff.evaluateFitness(game.getField(), 0 /* ??? */);
+	private double calculateFitness(int moves) {
+		return ff.evaluateFitness(game.getField(), moves);
 	}
 
 	private void makeStatistics() {
