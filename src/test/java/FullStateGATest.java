@@ -56,4 +56,33 @@ public class FullStateGATest {
 			assertTrue(dir >= 0 && dir <= 3);
 		}
 	}
+	
+	@Test
+	public void testMutation() {
+		states = 8;
+		field = new int[4];
+		ga = new FullStateGA(4, states);
+		int dir = ga.getMoveDirection(field);
+		
+		do {
+			ga.mutate(1.0);
+		} while (dir == ga.getMoveDirection(field));
+
+	}
+	
+	@Test
+	public void testCrossover() {
+		states = 8;
+		ga = new FullStateGA(4, states);
+		FullStateGA other = new FullStateGA(4, states);
+		FullStateGA child = ga.crossover(other);
+		assertNotEquals(other, child);
+		assertNotEquals(ga, child);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testIllegalCrossover() {
+		ga = new FullStateGA(4, 4);
+		ga.crossover(new FullStateGA(8, 8));
+	}
 }
