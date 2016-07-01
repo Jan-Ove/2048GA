@@ -5,11 +5,11 @@ import org.junit.Test;
 
 public class GameTest {
 
-	private Game game;
+	private GameImpl game;
 
 	@Before
 	public void setUp() {
-		game = new Game();
+		game = new GameImpl();
 	}
 
 	@Test(expected = IllegalArgumentException.class)

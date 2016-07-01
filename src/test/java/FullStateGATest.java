@@ -12,7 +12,7 @@ public class FullStateGATest {
 	@Test
 	public void testGetFixMoveDirection() {
 		int[] field = {3,3,3,3};
-		ga = new FullStateGA(INI_CHROM_0, 4);
+		ga = new FullStateGA(INI_CHROM_0, 2);
 		assertEquals(0, ga.getMoveDirection(field));
 		field[0] = 0;
 		assertEquals(0, ga.getMoveDirection(field));
@@ -23,7 +23,7 @@ public class FullStateGATest {
 		field = new int[4];
 		chromo = INI_CHROM_0.clone();
 		states = 4;
-		ga = new FullStateGA(chromo, states);
+		ga = new FullStateGA(chromo, 2);
 		
 		for(int i = 0; i < 256; i++) {
 			testCorrectIndexWithValues4(i,i);

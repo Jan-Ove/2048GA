@@ -9,7 +9,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		System.out.println("Welcome to 2048");
-		Game g = new Game();
+		GameImpl g = new GameImpl();
 		s = new Scanner(System.in);
 		while (true) {
 			printField(g.getField());
@@ -18,7 +18,7 @@ public class Main {
 
 	}
 
-	private static void performUserAction(Game g) {
+	private static void performUserAction(GameImpl g) {
 		System.out.println("Please Enter a direction (u, d, l, r):");
 		String move = null;
 		while (move == null) {

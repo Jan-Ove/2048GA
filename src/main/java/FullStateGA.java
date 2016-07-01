@@ -1,4 +1,5 @@
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Random;
 
 import com.google.common.math.IntMath;
@@ -8,7 +9,6 @@ public final class FullStateGA implements GeneticAlgorithm {
 	private static final Random RANDOM = new Random();
 	private byte[] chromosome;
 	private double fitness;
-	private int states;
 	private int shift;
 
 	/**
@@ -17,14 +17,13 @@ public final class FullStateGA implements GeneticAlgorithm {
 	 * @param fields
 	 *            number of positions in the game field
 	 * @param states
-	 *            number of possible values (values must range from 0 to states)
+	 *            number of possible values (values must range from 0 to states[exclusive])
 	 */
 	public FullStateGA(int fields, int states) {
-		this.states = states;
 		this.shift = IntMath.log2(states, RoundingMode.CEILING);
 		chromosome = new byte[IntMath.pow(states, fields)];
 		for (int i = 0; i < chromosome.length; i++) {
-			chromosome[i] = (byte) RANDOM.nextInt(states);
+			chromosome[i] = (byte) RANDOM.nextInt(4);
 		}
 	}
 
@@ -33,10 +32,9 @@ public final class FullStateGA implements GeneticAlgorithm {
 	 * 
 	 * @param initialChromosome
 	 */
-	FullStateGA(byte[] initialChromosome, int states) {
+	FullStateGA(byte[] initialChromosome, int shift) {
 		this.chromosome = initialChromosome;
-		this.states = states;
-		this.shift = IntMath.log2(states, RoundingMode.CEILING);
+		this.shift = shift;
 	}
 
 	@Override
@@ -64,7 +62,7 @@ public final class FullStateGA implements GeneticAlgorithm {
 	public void mutate(double probability) {
 		final int changes = (int) (probability * chromosome.length);
 		for (int i = 0; i < changes; i++) {
-			chromosome[RANDOM.nextInt(chromosome.length)] = (byte) RANDOM.nextInt(states);
+			chromosome[RANDOM.nextInt(chromosome.length)] = (byte) RANDOM.nextInt(4);
 		}
 	}
 
@@ -77,10 +75,10 @@ public final class FullStateGA implements GeneticAlgorithm {
 		if (other.chromosome.length != chromosome.length) {
 			throw new IllegalArgumentException("chromosome's lengths do not match!");
 		}
-		final byte[] newChromosome = chromosome.clone();
+		final byte[] newChromosome = Arrays.copyOf(chromosome, chromosome.length);
 		final int idx = RANDOM.nextInt(chromosome.length);
 		System.arraycopy(other.chromosome, idx, newChromosome, idx, chromosome.length - idx);
-		return new FullStateGA(newChromosome, states);
+		return new FullStateGA(newChromosome, shift);
 	}
 
 }

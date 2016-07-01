@@ -8,18 +8,20 @@ public final class Simulation {
 	private int numberOfMoves = 100;
 	private int numberOfGAs = 4;
 	private double mutRate = 0.0001;
-	private SimulationRoundResult currentRound;
+
+	private SimulationRoundResult currentRound = new SimulationRoundResult(0.0, 0.0, 0.0);
 	private FitnessFunction ff;
 
-	public Simulation(int fieldLength, int numberOfGAs, Class<GeneticAlgorithm> clazz, GenerationController genControl, FitnessFunction fitnessFunction)
-			throws InstantiationException, IllegalAccessException {
-		game = new Game(fieldLength, fieldLength);
+	public Simulation(int numberOfGAs, double mutationRate, Game game, GenerationController genControl,
+			FitnessFunction fitnessFunction, SpawnGA spawner) {
+		this.game = game;
+		this.mutRate = mutationRate;
 		this.genControl = genControl;
 		this.numberOfGAs = numberOfGAs;
 		this.ff = fitnessFunction;
 		algorithms = new ArrayList<>(numberOfGAs);
 		for (int i = 0; i < this.numberOfGAs; i++) {
-			algorithms.set(i, clazz.newInstance());
+			algorithms.add(spawner.spawn());
 		}
 	}
 
@@ -45,14 +47,17 @@ public final class Simulation {
 					if (!game.left()) {
 						break;
 					}
-				} else
+				} else {
 					throw new IllegalStateException();
+				}
+				if (game.isFinished()) {
+					break;
+				}
 			}
 			ga.setFitness(calculateFitness(i));
 		}
-		algorithms = genControl.breedNewGeneration(algorithms, mutRate);
-
 		makeStatistics();
+		algorithms = genControl.breedNewGeneration(algorithms, mutRate);
 		return currentRound;
 
 	}
@@ -77,5 +82,17 @@ public final class Simulation {
 		currentRound.maxFitness = max;
 		currentRound.minFitness = min;
 		currentRound.avgFitness = sum / algorithms.size();
+	}
+
+	public double getMutRate() {
+		return mutRate;
+	}
+
+	public void setMutRate(double mutRate) {
+		this.mutRate = mutRate;
+	}
+
+	public static interface SpawnGA {
+		GeneticAlgorithm spawn();
 	}
 }

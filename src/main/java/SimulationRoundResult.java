@@ -9,4 +9,9 @@ public final class SimulationRoundResult {
 		this.minFitness = minFitness;
 		this.avgFitness = avgFitness;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("Fitness (max, min, avg): %s %s %s ", maxFitness, minFitness, avgFitness);
+	}
 }
