@@ -219,7 +219,7 @@ public class GameImpl implements Game {
 	 * @see Game#reset()
 	 */
 	@Override
-	public void reset() {
+	public void reset(long seed) {
 		for (int i = 0; i < field.length; i++) {
 			field[i] = 0;
 		}

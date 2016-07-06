@@ -11,7 +11,7 @@ public interface Game {
 
 	boolean right();
 
-	void reset();
+	void reset(long seed);
 	
 	boolean isFinished();
 

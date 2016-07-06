@@ -1,34 +1,73 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class Simulation {
-	private final Game game;
-	private List<GeneticAlgorithm> algorithms;
+	private final Game[] games;
+	private GeneticAlgorithm[] algorithms;
 	private final GenerationController genControl;
-	private int numberOfMoves = 100;
-	private int numberOfGAs = 4;
-	private double mutRate = 0.0001;
+	private int numberOfMoves;
+	private int numberOfGAs;
+	private final int cores;
+	private double mutRate;
+	private Runnable[] runnables;
+	private ExecutorService pool;
+	private CyclicBarrier barrier;
 
 	private SimulationRoundResult currentRound = new SimulationRoundResult(0.0, 0.0, 0.0);
 	private FitnessFunction ff;
+	private long seed = 1337L;
 
-	public Simulation(int numberOfGAs, double mutationRate, Game game, GenerationController genControl,
-			FitnessFunction fitnessFunction, SpawnGA spawner) {
-		this.game = game;
+	public Simulation(int numberOfMoves, int numberOfGAs, double mutationRate, Game[] games,
+			GenerationController genControl, FitnessFunction fitnessFunction, ExecutorService pool, SpawnGA spawner) {
+		cores = games.length;
+		this.numberOfMoves = numberOfMoves;
+		this.pool = pool;
+		barrier = new CyclicBarrier(cores + 1);
+		this.games = games;
 		this.mutRate = mutationRate;
 		this.genControl = genControl;
 		this.numberOfGAs = numberOfGAs;
 		this.ff = fitnessFunction;
-		algorithms = new ArrayList<>(numberOfGAs);
+		algorithms = new GeneticAlgorithm[numberOfGAs];
 		for (int i = 0; i < this.numberOfGAs; i++) {
-			algorithms.add(spawner.spawn());
+			algorithms[i] = spawner.spawn();
 		}
+		runnables = new Runnable[cores];
+		for (int i = 0; i < cores; i++) {
+			final int local = i;
+			runnables[i] = () -> runInParallel(local, (local * numberOfGAs) / cores,
+					((local + 1) * numberOfGAs) / cores);
+		}
+
 	}
 
 	public SimulationRoundResult runSimulation() {
-		for (GeneticAlgorithm ga : algorithms) {
-			game.reset();
+		for (Runnable r : runnables) {
+			pool.execute(r);
+		}
+		try {
+			barrier.await();
+		} catch (InterruptedException | BrokenBarrierException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		makeStatistics();
+		algorithms = genControl.breedNewGeneration(algorithms, mutRate);
+		// play 16 different games in a round robin fashion
+		seed += Long.MIN_VALUE >>> 3;
+
+		return currentRound;
+
+	}
+
+	private void runInParallel(int nr, int lwr, int upr) {
+		Game game = games[nr];
+		for (int j = lwr; j < upr; j++) {
+			game.reset(seed);
 			int i = 0;
+			GeneticAlgorithm ga = algorithms[j];
 			for (; i < numberOfMoves; i++) {
 				int direction = ga.getMoveDirection(game.getField());
 				if (direction == 0) {
@@ -54,15 +93,16 @@ public final class Simulation {
 					break;
 				}
 			}
-			ga.setFitness(calculateFitness(i));
+			ga.setFitness(calculateFitness(game, i));
 		}
-		makeStatistics();
-		algorithms = genControl.breedNewGeneration(algorithms, mutRate);
-		return currentRound;
-
+		try {
+			barrier.await();
+		} catch (InterruptedException | BrokenBarrierException e) {
+			e.printStackTrace();
+		}
 	}
 
-	private double calculateFitness(int moves) {
+	private double calculateFitness(Game game, int moves) {
 		return ff.evaluateFitness(game.getField(), moves);
 	}
 
@@ -81,7 +121,7 @@ public final class Simulation {
 		}
 		currentRound.maxFitness = max;
 		currentRound.minFitness = min;
-		currentRound.avgFitness = sum / algorithms.size();
+		currentRound.avgFitness = sum / algorithms.length;
 	}
 
 	public double getMutRate() {

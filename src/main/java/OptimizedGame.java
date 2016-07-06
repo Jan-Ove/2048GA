@@ -29,7 +29,8 @@ public final class OptimizedGame implements Game {
 		addRandomNumber();
 	}
 
-	public void reset() {
+	public void reset(long seed) {
+		rnd.setSeed(seed);
 		for (int i = 0; i < field.length; i++) {
 			field[i] = 0;
 		}
@@ -146,7 +147,7 @@ public final class OptimizedGame implements Game {
 			}
 			if (fullIndex >= 0 && line[fullIndex] == line[i]) {
 				line[fullIndex]++;
-				if(line[fullIndex] == maxValue) {
+				if (line[fullIndex] == maxValue) {
 					isFinished = true;
 				}
 				line[i] = 0;

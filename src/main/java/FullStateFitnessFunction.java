@@ -16,7 +16,7 @@ public final class FullStateFitnessFunction implements FitnessFunction {
 		double fitness = 0;
 
 		if (values[0] == 7) {
-			fitness = 150 - move;
+			fitness = 1000 - move;
 		}
 		for(int v: values) {
 			fitness += v* 5;

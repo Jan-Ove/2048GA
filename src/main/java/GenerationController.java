@@ -1,5 +1,3 @@
-import java.util.List;
-
 public interface GenerationController {
 	/**
 	 * Breeds a new generation from the old one
@@ -8,5 +6,5 @@ public interface GenerationController {
 	 * @param mutationRate
 	 * @return the new generation
 	 */
-	List<GeneticAlgorithm> breedNewGeneration(List<GeneticAlgorithm> oldGen, double mutationRate);
+	GeneticAlgorithm[] breedNewGeneration(GeneticAlgorithm[] oldGen, double mutationRate);
 }
