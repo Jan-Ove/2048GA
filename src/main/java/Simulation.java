@@ -1,8 +1,12 @@
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+/**
+ * This class runs a Simulation of 2048 using the given game, controller,
+ * fitness function and genetic algorithm
+ *
+ */
 public final class Simulation {
 	private final Game[] games;
 	private GeneticAlgorithm[] algorithms;
@@ -43,6 +47,11 @@ public final class Simulation {
 
 	}
 
+	/**
+	 * runs a single round in parallel
+	 * 
+	 * @return the result for this round
+	 */
 	public SimulationRoundResult runSimulation() {
 		for (Runnable r : runnables) {
 			pool.execute(r);
